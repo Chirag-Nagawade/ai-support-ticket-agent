@@ -11,7 +11,7 @@ const ticketSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['Open', 'In Progress', 'Resolved', 'Closed'],
+    enum: ['Open', 'In Progress', 'Resolved', 'Closed', 'Pending Info'],
     default: 'Open'
   },
   user: {
@@ -20,6 +20,7 @@ const ticketSchema = new mongoose.Schema({
     required: true
   },
   // AI Insights
+  ai_summary: { type: String },
   priority: { type: String, default: 'Unassigned' },
   sentiment: { type: String, default: 'Neutral' },
   category: { type: String, default: 'General' },
@@ -29,9 +30,11 @@ const ticketSchema = new mongoose.Schema({
   assigned_team: { type: String, default: 'Support Team' },
   similar_issues: { type: String },
   ai_response: { type: String },
-  // Resolution details
-  resolution_msg: { type: String }, // Manual message from agent
-  ai_resolution_msg: { type: String } // Suggested AI message
+  // Resolution & Communication details
+  resolution_msg: { type: String }, // Final manual message from agent on resolution
+  ai_resolution_msg: { type: String }, // Final AI response on resolution
+  staff_message: { type: String }, // Query sent for "More Info"
+  is_pending_user: { type: Boolean, default: false }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Ticket', ticketSchema);

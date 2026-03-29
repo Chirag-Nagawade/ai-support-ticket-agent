@@ -84,4 +84,57 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { register, login };
+const getAllStaff = async (req, res) => {
+  try {
+    const staff = await User.find({ role: 'agent' }).select('-password');
+    res.json(staff);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+const updateStaff = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, email, department } = req.body;
+    
+    // Check if another user already has this email
+    if (email) {
+      const existingUser = await User.findOne({ email, _id: { $ne: id } });
+      if (existingUser) {
+        return res.status(400).json({ message: 'Email already in use' });
+      }
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { $set: { name, email, department } },
+      { new: true }
+    ).select('-password');
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'Staff member not found' });
+    }
+
+    res.json({ message: 'Staff member updated successfully', user: updatedUser });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+const deleteStaff = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedUser = await User.findByIdAndDelete(id);
+
+    if (!deletedUser) {
+      return res.status(404).json({ message: 'Staff member not found' });
+    }
+
+    res.json({ message: 'Staff member deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+module.exports = { register, login, getAllStaff, updateStaff, deleteStaff };

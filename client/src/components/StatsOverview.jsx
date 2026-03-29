@@ -1,7 +1,7 @@
 import React from 'react';
 import { CheckCircle, Clock, AlertTriangle, MessageSquare } from 'lucide-react';
 
-const StatsOverview = ({ stats }) => {
+const StatsOverview = ({ stats, activeCriticalCount }) => {
   const getCount = (status) => stats.find(s => s._id === status)?.count || 0;
   
   const total = stats.reduce((acc, curr) => acc + curr.count, 0);
@@ -12,7 +12,7 @@ const StatsOverview = ({ stats }) => {
     { title: 'Total Tickets', value: total, icon: <MessageSquare className="text-blue-600" />, bg: 'bg-blue-50' },
     { title: 'Ongoing / Pending', value: pending, icon: <Clock className="text-orange-600" />, bg: 'bg-orange-50' },
     { title: 'Solved Today', value: solved, icon: <CheckCircle className="text-green-600" />, bg: 'bg-green-50' },
-    { title: 'Critical Issues', value: stats.find(s => s._id === 'High')?.count || 0, icon: <AlertTriangle className="text-red-600" />, bg: 'bg-red-50' },
+    { title: 'Critical Issues', value: activeCriticalCount || 0, icon: <AlertTriangle className="text-red-600" />, bg: 'bg-red-50' },
   ];
 
   return (
